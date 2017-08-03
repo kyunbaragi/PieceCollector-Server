@@ -17,7 +17,7 @@ conn.connect(function(err) {
 var app = express();
 
 app.get('/places', function (req, res) {
-	console.log("Requested!");
+	console.log("/places requested");
 	var sql = 'SELECT * FROM places';
 	conn.query(sql, function (error, results, fields) {
 		if (error) {
@@ -25,6 +25,19 @@ app.get('/places', function (req, res) {
 			res.status(500).send('Internal Server Error');
 		} else {
 			res.json(results);		
+		}
+	}); 
+});
+
+app.get('/places/version', function (req, res) {
+	console.log("/places/version requested");
+	var sql = "SELECT (version) FROM versions WHERE versions.name='places'";
+	conn.query(sql, function (error, results, fields) {
+		if (error) {
+			console.log(error);
+			res.status(500).send('Internal Server Error');
+		} else {
+			res.send(results);		
 		}
 	}); 
 });
