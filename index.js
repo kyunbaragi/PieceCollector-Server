@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var conn = mysql.createConnection({
 	host     : 'localhost',
@@ -15,6 +16,22 @@ conn.connect(function(err) {
 });
 
 var app = express();
+app.use(bodyParser.json());
+
+app.post('/users', function (req, res) {
+	console.log("/users requested");
+	console.log(req.body);
+	
+	/*var sql = 'SELECT * FROM places';
+	conn.query(sql, function (error, results, fields) {
+		if (error) {
+			console.log(error);
+			res.status(500).send('Internal Server Error');
+		} else {
+			res.json(results);		
+		}
+	}); */
+});
 
 app.get('/places', function (req, res) {
 	console.log("/places requested");
