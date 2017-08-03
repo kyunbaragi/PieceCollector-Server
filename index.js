@@ -29,15 +29,15 @@ app.get('/places', function (req, res) {
 	}); 
 });
 
-app.get('/places/version', function (req, res) {
-	console.log("/places/version requested");
-	var sql = "SELECT (version) FROM versions WHERE versions.name='places'";
+app.get('/versions/:table', function (req, res) {
+	console.log("/versions/:table requested");
+	var sql = "SELECT * FROM versions WHERE versions.name='" + req.params.table +"'";
 	conn.query(sql, function (error, results, fields) {
 		if (error) {
 			console.log(error);
 			res.status(500).send('Internal Server Error');
 		} else {
-			res.send(results);		
+			res.send(results[0].version);		
 		}
 	}); 
 });
