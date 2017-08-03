@@ -1,3 +1,4 @@
+var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
@@ -16,21 +17,24 @@ conn.connect(function(err) {
 });
 
 var app = express();
-app.use(bodyParser.json());
+var jsonParser = bodyParser.json();
 
-app.post('/users', function (req, res) {
+app.post('/users', jsonParser, function (req, res) {
 	console.log("/users requested");
-	console.log(req.body);
-	
-	/*var sql = 'SELECT * FROM places';
+	var userID = req.body.id;
+	var userEmail = req.body.email;
+	var sql = "INSERT INTO users (_id, email, created) VALUES ('" + userID + "', '" + userEmail + "', NOW())";
 	conn.query(sql, function (error, results, fields) {
 		if (error) {
 			console.log(error);
 			res.status(500).send('Internal Server Error');
 		} else {
-			res.json(results);		
+			var dir = './users/' + userID;
+			if(!fs.existsSync(dir)) {
+				fs.mkdirSync(dir)
+			}	
 		}
-	}); */
+	});
 });
 
 app.get('/places', function (req, res) {
@@ -41,7 +45,7 @@ app.get('/places', function (req, res) {
 			console.log(error);
 			res.status(500).send('Internal Server Error');
 		} else {
-			res.json(results);		
+			res.json(results);
 		}
 	}); 
 });
