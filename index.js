@@ -19,6 +19,13 @@ conn.connect(function(err) {
 var app = express();
 var jsonParser = bodyParser.json();
 
+app.post('/users/new', jsonParser, function (req, res) {
+	console.log("/users/new requested");
+	var userID = req.body.id;
+	var userEmail = req.body.email;
+	console.log(userID + " / " + userEmail);
+});
+
 app.post('/users', jsonParser, function (req, res) {
 	console.log("/users requested");
 	var userID = req.body.id;
