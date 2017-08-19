@@ -43,7 +43,7 @@ app.post('/users/new', jsonParser, function (req, res) {
 });
 
 app.post('/change/memo', jsonParser, function (req, res) {
-	console.log("/upload/memo");
+	console.log('/upload/memo requested');
 	var recordID = req.body.id;
 	var userMemo = req.body.memo;
 	var sql = "UPDATE records SET memo = '" + userMemo + "' WHERE _id = '" + recordID + "'";
@@ -57,10 +57,25 @@ app.post('/change/memo', jsonParser, function (req, res) {
 	})
 });
 
+app.post('/feedback', jsonParser, function (req, res) {
+	console.log('/feedback requested');
+	var userID = req.body.user_id;
+	var feedback = req.body.feedback;
+	var sql = "INSERT INTO feedbacks (user_id, feedback, created) VALUES ('" + userID + "', '" + feedback + "', NOW())";
+	conn.query(sql, function (error, results, fields) {
+		if(error) {
+			console.log(error);
+			res.status(500).send('Internal Server Error');
+		} else {
+			res.status(200).send('Success');
+		}
+	})
+});
 
-app.post('/records', jsonParser, function (req, res) {
-	console.log("/records requested");
-	var userID = req.body.id;
+app.get('/records/:user', function (req, res) {
+	console.log('/records/:user requested');
+	console.log(req.params.user);
+	var userID = req.params.user;
 	var sql = "SELECT r._id, p.title, r.image_path, r.memo, r.created FROM records r JOIN places p ON r.place_id = p._id WHERE r.user_id = '" + userID + "'" + " ORDER BY r.created DESC";
 	conn.query(sql, function (error, results, fields) {
 		if (error) {
@@ -134,6 +149,34 @@ app.get('/places', function (req, res) {
 			res.json(results);
 		}
 	}); 
+});
+
+app.get('/places/:collection', function (req, res) {
+	console.log('/places/:collection');
+	console.log(req.params.collection);
+	var collectionID = req.params.collection;
+	var sql = "SELECT * FROM places WHERE collection_id = '" + collectionID + "'";
+	conn.query(sql, function (error, results, fields) {
+		if(error) {
+			console.log(error);
+			res.status(500).send('Internal Server Error');
+		} else {
+			res.json(results);
+		}
+	});
+});
+
+app.get('/collections', function (req, res) {
+	console.log("/collections requested");
+	var sql = 'SELECT * FROM collections';
+	conn.query(sql, function (error, results, fields) {
+		if(error) {
+			console.log(error);
+			res.status(500).send('Internal Server Error');
+		} else {
+			res.json(results);
+		}
+	});
 });
 
 app.get('/versions/:table', function (req, res) {
